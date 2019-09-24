@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>Canvas tutorial template</title>
+    <script type="text/javascript">
+    const NUM = 500;
+    const WIDTH = 800;
+    const HEIGHT = 800;
+    const PI_2 = Math.PI * 2;
+    var ctx;
+    var balls = [];
+    var Ball = function(speedX, speedY, locationX, locationY,radius,red, green, blue) {
+      this.speedX    = speedX;
+      this.speedY    = speedY;
+      this.locationX = locationX;
+      this.locationY = locationY;
+      this.radius    = radius;
+      this.red       = red;
+      this.green     = green;
+      this.blue      = blue;
+    }
+
+    function init(){
+      var canvas = document.getElementById('tutorial');
+      if (canvas.getContext){
+        ctx = canvas.getContext('2d');
+        for(var i = 0; i < NUM; i++){
+          balls[i] = new Ball(
+            Math.random() * 8.0 - 4.0,
+            Math.random() * 8.0 - 4.0,
+            WIDTH / 2,
+            HEIGHT / 2,
+            Math.random() * 45.0 + 1.0,
+            Math.floor(Math.random() * 96),
+            Math.floor(Math.random() * 96),
+            Math.floor(Math.random() * 96)
+          );
+        }
+        setInterval(draw, 33);
+      }
+    }
+
+    function draw(){
+    	ctx.globalCompositeOperation = "source-over";
+    	ctx.fillStyle = "rgba(8,8,12,.2)";
+    	ctx.fillRect(0, 0, WIDTH, HEIGHT);
+    	ctx.globalCompositeOperation = "lighter";
+    	for(var i = 0; i < NUM; i++){
+        let obj = balls[i];
+  	    //位置を更新
+  	    obj.locationX += obj.speedX;
+  	    obj.locationY += obj.speedY;
+        // 跳ね返るように移動方向を位置によって切り替える
+  	    if(obj.locationX < 0 || obj.locationX > WIDTH){
+          obj.speedX *= -1.0;
+        }
+        if(obj.locationY < 0 || obj.locationY > HEIGHT){
+          obj.speedY *= -1.0;
+        }
+  	    //更新した座標で円を描く
+  	    ctx.beginPath();
+        ctx.fillStyle = 'rgb(' + obj.red + ',' + obj.green + ',' + obj.blue + ')';
+        ctx.arc(obj.locationX, obj.locationY, obj.radius, 0, PI_2, true);
+        ctx.fill();
+      }
+    }
+    </script>
+    <style type="text/css">
+      canvas { background-color:#000; border: 1px solid #999; }
+    </style>
+  </head>
+  <body onload="init();">
+    <canvas id="tutorial" width="800" height="800"></canvas>
+  </body>
+</html>
